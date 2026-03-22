@@ -1,5 +1,12 @@
-# Slimefun 4
-*Looking for the download link? [**Click here**](https://github.com/Slimefun/Slimefun4/blob/master/README.md#floppy_disk-download-slimefun-4)*
+# Slimefun 5 (Custom Rebuild)
+*Looking for the download link? [**Click here**](#floppy_disk-download-slimefun-5)*
+
+> This repository is a **custom Slimefun 5 rebuild** maintained by **HirokawaAzusa**.
+> Original watermark and creator credits are intentionally preserved: Slimefun started in 2013 and was built by **The Slimefun 4 Community**.
+
+### Build Compatibility (This Repository)
+- Minecraft/Paper version: **1.21.11 only**
+- Java version: **Java 21 only**
 
 Slimefun is a plugin which aims to turn your Spigot Server into a modpack without ever installing a single mod. It offers everything you could possibly imagine. From Backpacks to Jetpacks! Slimefun lets every player decide on their own how much they want to dive into Magic or Tech.<br>
 We got everything from magical wands to nuclear reactors.<br>
@@ -12,7 +19,8 @@ It currently adds over **500 new items and recipes** to Minecraft ([Read more ab
 But it also comes with a lot of addons! Check out our [addons](https://github.com/Slimefun/Slimefun4/wiki/Addons), you may find exactly what you were looking for.
 
 ### Quick navigation
-* **[:floppy_disk: Download Slimefun4](#floppy_disk-download-slimefun-4)**
+* **[:floppy_disk: Download Slimefun 5](#floppy_disk-download-slimefun-5)**
+* **[:package: Full with addons](#package-full-with-addons)**
 * **[:framed_picture: Screenshots](#framed_picture-screenshots)**
 * **[:headphones: Discord Support Server](#headphones-discord)**
 * **[:beetle: Bug Tracker](https://github.com/Slimefun/Slimefun4/issues)**
@@ -20,40 +28,22 @@ But it also comes with a lot of addons! Check out our [addons](https://github.co
 * **[:interrobang: FAQ](https://github.com/Slimefun/Slimefun4/wiki/FAQ)**
 * **[:handshake: How to contribute](https://github.com/Slimefun/Slimefun4/blob/master/CONTRIBUTING.md)**
 
-## :floppy_disk: Download Slimefun 4
+## :floppy_disk: Download Slimefun 5
 Slimefun requires your Minecraft Server to be running on [Spigot](https://spigotmc.org/), [Paper](https://papermc.io/) or on any fork of these.<br>
 (See also: [How to install Slimefun](https://github.com/Slimefun/Slimefun4/wiki/Installing-Slimefun))
 
-Slimefun 4 can be downloaded **for free** on our builds page.<br>
-We currently provide two distinct versions of Slimefun, development builds and "stable" builds.<br>
-Here is a full summary of the differences between the two different versions of Slimefun.
+This custom Slimefun 5 build is provided through this repository.
 
-| | development (latest) | "stable" |
-| ------------------ | -------- | -------- |
-| **Minecraft version(s)** | :video_game: **1.16.\* - 1.20.\*** | :video_game: **1.16.\* - 1.20.\*** |
-| **Java version** | :computer: **Java 16 (or higher)** | :computer: **Java 16 (or higher)** |
-| **automatic updates** | :heavy_check_mark: | :heavy_check_mark: |
-| **frequent updates** | :heavy_check_mark: | :x: |
-| **latest content** | :heavy_check_mark: | :x: |
-| **Discord support** | :heavy_check_mark: | :x: |
-| **Bug Reports** | :heavy_check_mark: | :x: |
-| **testing before release** | :x: | :heavy_check_mark: |
-| **change logs** | :x: | :memo: **[change log](https://github.com/Slimefun/Slimefun4/blob/master/CHANGELOG.md)** |
-| **Download links** | :floppy_disk: **[download latest](https://blob.build/project/Slimefun4/Dev)** | :floppy_disk: **[download "stable"](https://blob.build/project/Slimefun4/RC)** |
+| | Slimefun 5 (custom build) |
+| ------------------ | --------------------------- |
+| **Minecraft version(s)** | :video_game: **1.21.11 only** |
+| **Java version** | :computer: **Java 21 only** |
+| **automatic updates** | :x: disabled in this custom rebuild |
+| **Download links** | :floppy_disk: this repository |
 
-**:exclamation: We wholeheartedly recommend you to use _development builds_, they are the most recent version of Slimefun and also receive the most frequent updates! In fact, "stable" builds are so outdated that we won't accept bug reports from them at all.**
-<details>
-  <summary>Here's why...</summary>
-  
-"Stable" builds do not receive frequent updates or fast patches. As time goes on, bugs are fixed but it will take some time until these fixes make it into a "stable" build. We will also not accept or review any bug reports from "stable" builds. They are in fact just old development builds that seemed to run fine without any __major__ issues.
-
-**:question: Why use a "stable" build then?**<br>
-While "stable" builds most definitely contain more bugs than development builds due to their very slow update schedule. you can be sure that they will not include __game-breaking__ issues, but rest assured that development builds almost never contain such issues either. If your server or business however heavily depends on a version of Slimefun that does not change/update a lot, you are forgiven if you choose the "stable" branch. But development builds will bring you the best experience, both in terms of features and bug fixes.
-
-**:question: What exactly are these "stable" builds then and why do you put them in quotes?**<br>
-"Stable" builds are literally just outdated development builds that seemed to run fine without any __major__ issues. But they are far from bug-free hence why actually calling them stable would be hypocritical. However these builds can only really stay "stable" if there are enough people using development builds and report any bugs they come across. Otherwise potential issues may go unnoticed and slip into a "stable" build. Again, we really recommend you to choose the development builds. But since a few people really wanted "stable" builds, they are now an option too.
-
-</details>
+## :package: Full with addons
+If you want to try the **full package with addons**, please contact an admin on Discord.<br>
+Discord admin: <@!330041899794563074> [@.nrein]
 
 ## :framed_picture: Screenshots
 So what does Slimefun look like?<br>
