@@ -7,10 +7,12 @@ import java.util.logging.Level;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.bakedlibs.dough.config.Config;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.storage.backend.sqlite.SqliteDataStore;
 
 // This class will be deprecated, relocated and rewritten in a future version.
 public class BlockMenu extends DirtyChestMenu {
@@ -48,6 +50,25 @@ public class BlockMenu extends DirtyChestMenu {
         this.getContents();
     }
 
+    public BlockMenu(BlockMenuPreset preset, Location l, YamlConfiguration cfg) {
+        super(preset);
+        this.location = l;
+
+        for (int i = 0; i < 54; i++) {
+            if (cfg.contains(String.valueOf(i))) {
+                addItem(i, cfg.getItemStack(String.valueOf(i)));
+            }
+        }
+
+        preset.clone(this);
+
+        if (preset.getSize() > -1 && !preset.getPresetSlots().contains(preset.getSize() - 1) && cfg.contains(String.valueOf(preset.getSize() - 1))) {
+            addItem(preset.getSize() - 1, cfg.getItemStack(String.valueOf(preset.getSize() - 1)));
+        }
+
+        this.getContents();
+    }
+
     public void save(Location l) {
         if (!isDirty()) {
             return;
@@ -56,15 +77,26 @@ public class BlockMenu extends DirtyChestMenu {
         // To force CS-CoreLib to build the Inventory
         this.getContents();
 
-        File file = new File("data-storage/Slimefun/stored-inventories/" + serializeLocation(l) + ".sfi");
-        Config cfg = new Config(file);
-        cfg.setValue("preset", preset.getID());
+        YamlConfiguration cfg = new YamlConfiguration();
+        cfg.set("preset", preset.getID());
 
         for (int slot : preset.getInventorySlots()) {
-            cfg.setValue(String.valueOf(slot), getItemInSlot(slot));
+            cfg.set(String.valueOf(slot), getItemInSlot(slot));
         }
 
-        cfg.save();
+        if (SqliteDataStore.isEnabled()) {
+            SqliteDataStore.saveBlockInventory(l, preset.getID(), cfg.saveToString());
+        } else {
+            File file = new File("data-storage/Slimefun/stored-inventories/" + serializeLocation(l) + ".sfi");
+            Config legacyCfg = new Config(file);
+            legacyCfg.setValue("preset", preset.getID());
+
+            for (int slot : preset.getInventorySlots()) {
+                legacyCfg.setValue(String.valueOf(slot), getItemInSlot(slot));
+            }
+
+            legacyCfg.save();
+        }
 
         changes = 0;
     }
@@ -112,6 +144,11 @@ public class BlockMenu extends DirtyChestMenu {
     }
 
     public void delete(Location l) {
+        if (SqliteDataStore.isEnabled()) {
+            SqliteDataStore.deleteBlockInventory(l);
+            return;
+        }
+
         File file = new File("data-storage/Slimefun/stored-inventories/" + serializeLocation(l) + ".sfi");
 
         if (file.exists()) {
@@ -121,5 +158,16 @@ public class BlockMenu extends DirtyChestMenu {
                 Slimefun.logger().log(Level.WARNING, e, () -> "Could not delete file \"" + file.getName() + '"');
             }
         }
+    }
+
+    public String toStorageYaml() {
+        YamlConfiguration cfg = new YamlConfiguration();
+        cfg.set("preset", preset.getID());
+
+        for (int slot : preset.getInventorySlots()) {
+            cfg.set(String.valueOf(slot), getItemInSlot(slot));
+        }
+
+        return cfg.saveToString();
     }
 }

@@ -39,6 +39,7 @@ import io.github.bakedlibs.dough.blocks.BlockPosition;
 import io.github.bakedlibs.dough.common.CommonPatterns;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.storage.backend.sqlite.SqliteDataStore;
 import io.github.thebusybiscuit.slimefun4.utils.NumberUtils;
 
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
@@ -90,6 +91,10 @@ public class BlockStorage {
         return world.getName() + ";Chunk;" + x + ';' + z;
     }
 
+    private static boolean useDatabaseStorage() {
+        return SqliteDataStore.isEnabled();
+    }
+
     private static Location deserializeLocation(String l) {
         try {
             String[] components = CommonPatterns.SEMICOLON.split(l);
@@ -125,7 +130,15 @@ public class BlockStorage {
 
         File dir = new File(PATH_BLOCKS + w.getName());
 
-        if (dir.exists()) {
+        if (useDatabaseStorage()) {
+            SqliteDataStore.initIfEnabled();
+            int loaded = loadBlocksFromDatabase();
+
+            if (loaded == 0 && dir.exists()) {
+                loadBlocks(dir);
+                migrateWorldBlocksToDatabase();
+            }
+        } else if (dir.exists()) {
             loadBlocks(dir);
         } else {
             dir.mkdirs();
@@ -182,6 +195,57 @@ public class BlockStorage {
         }
     }
 
+    private int loadBlocksFromDatabase() {
+        int loaded = 0;
+
+        Map<Location, BlockInfoConfig> dbBlocks = SqliteDataStore.loadBlockData(world);
+        for (Map.Entry<Location, BlockInfoConfig> entry : dbBlocks.entrySet()) {
+            Config blockInfo = entry.getValue();
+
+            if (blockInfo.contains("id")) {
+                storage.put(entry.getKey(), blockInfo);
+
+                String id = blockInfo.getString("id");
+                if (id != null && Slimefun.getRegistry().getTickerBlocks().contains(id)) {
+                    Slimefun.getTickerTask().enableTicker(entry.getKey());
+                }
+
+                loaded++;
+            }
+        }
+
+        if (loaded > 0) {
+            Slimefun.logger().log(Level.INFO, "Loaded a total of {0} Blocks from sqlite for World \"{1}\"", new Object[] { loaded, world.getName() });
+        }
+
+        return loaded;
+    }
+
+    private void migrateWorldBlocksToDatabase() {
+        if (storage.isEmpty()) {
+            return;
+        }
+
+        Map<String, Config> migration = new HashMap<>();
+
+        for (Map.Entry<Location, Config> entry : storage.entrySet()) {
+            String id = entry.getValue().getString("id");
+            if (id == null) {
+                continue;
+            }
+
+            String json = serializeBlockInfo(entry.getValue());
+            if (json != null) {
+                Config cfg = migration.computeIfAbsent(id, key -> new Config(new File(PATH_BLOCKS + world.getName() + "/migration-buffer.sfb")));
+                cfg.setValue(serializeLocation(entry.getKey()), json);
+            }
+        }
+
+        if (!migration.isEmpty()) {
+            SqliteDataStore.applyBlockDataChanges(migration);
+        }
+    }
+
     private void loadBlock(File file, FileConfiguration cfg, String key) {
         Location l = deserializeLocation(key);
 
@@ -220,6 +284,26 @@ public class BlockStorage {
     }
 
     private void loadChunks() {
+        if (useDatabaseStorage()) {
+            Map<String, BlockInfoConfig> chunkData = SqliteDataStore.loadChunkData(world);
+
+            if (chunkData.isEmpty()) {
+                loadLegacyChunks();
+
+                if (!Slimefun.getRegistry().getChunks().isEmpty()) {
+                    SqliteDataStore.saveAllChunkData(Slimefun.getRegistry().getChunks());
+                }
+            } else {
+                Slimefun.getRegistry().getChunks().putAll(chunkData);
+            }
+
+            return;
+        }
+
+        loadLegacyChunks();
+    }
+
+    private void loadLegacyChunks() {
         File chunks = new File(PATH_CHUNKS + "chunks.sfc");
 
         if (chunks.exists()) {
@@ -239,6 +323,72 @@ public class BlockStorage {
     }
 
     private void loadInventories() {
+        if (useDatabaseStorage()) {
+            loadInventoriesFromDatabase();
+            return;
+        }
+
+        loadLegacyInventories();
+    }
+
+    private void loadInventoriesFromDatabase() {
+        Map<Location, String> inventoryData = SqliteDataStore.loadBlockInventories(world);
+
+        if (inventoryData.isEmpty()) {
+            loadLegacyInventories();
+
+            for (Map.Entry<Location, BlockMenu> entry : inventories.entrySet()) {
+                SqliteDataStore.saveBlockInventory(entry.getKey(), entry.getValue().getPreset().getID(), entry.getValue().toStorageYaml());
+            }
+
+            for (Map.Entry<String, UniversalBlockMenu> entry : Slimefun.getRegistry().getUniversalInventories().entrySet()) {
+                SqliteDataStore.saveUniversalInventory(entry.getKey(), entry.getValue().toStorageYaml());
+            }
+
+            return;
+        }
+
+        for (Map.Entry<Location, String> entry : inventoryData.entrySet()) {
+            try {
+                YamlConfiguration cfg = new YamlConfiguration();
+                cfg.loadFromString(entry.getValue());
+                BlockMenuPreset preset = BlockMenuPreset.getPreset(cfg.getString("preset"));
+
+                if (preset == null) {
+                    preset = BlockMenuPreset.getPreset(checkID(entry.getKey()));
+                }
+
+                if (preset != null) {
+                    inventories.put(entry.getKey(), new BlockMenu(preset, entry.getKey(), cfg));
+                }
+            } catch (Exception x) {
+                Slimefun.logger().log(Level.SEVERE, x, () -> "An Error occurred while loading sqlite Block Inventory @ " + entry.getKey());
+            }
+        }
+
+        if (universalInventoriesLoaded) {
+            return;
+        }
+
+        universalInventoriesLoaded = true;
+        Map<String, String> universalData = SqliteDataStore.loadUniversalInventories();
+
+        for (Map.Entry<String, String> entry : universalData.entrySet()) {
+            try {
+                YamlConfiguration cfg = new YamlConfiguration();
+                cfg.loadFromString(entry.getValue());
+                BlockMenuPreset preset = BlockMenuPreset.getPreset(entry.getKey());
+
+                if (preset != null) {
+                    Slimefun.getRegistry().getUniversalInventories().put(preset.getID(), new UniversalBlockMenu(preset, cfg));
+                }
+            } catch (Exception x) {
+                Slimefun.logger().log(Level.SEVERE, x, () -> "An Error occurred while loading sqlite universal Inventory: " + entry.getKey());
+            }
+        }
+    }
+
+    private void loadLegacyInventories() {
         for (File file : new File("data-storage/Slimefun/stored-inventories").listFiles()) {
             if (file.getName().startsWith(world.getName()) && file.getName().endsWith(".sfi")) {
                 try {
@@ -315,28 +465,33 @@ public class BlockStorage {
         Slimefun.logger().log(Level.INFO, "Saving block data for world \"{0}\" ({1} change(s) queued)", new Object[] { world.getName(), changes });
         Map<String, Config> cache = new HashMap<>(blocksCache);
 
-        for (Map.Entry<String, Config> entry : cache.entrySet()) {
-            blocksCache.remove(entry.getKey());
-            Config cfg = entry.getValue();
+        if (useDatabaseStorage()) {
+            SqliteDataStore.applyBlockDataChanges(cache);
+            blocksCache.keySet().removeAll(cache.keySet());
+        } else {
+            for (Map.Entry<String, Config> entry : cache.entrySet()) {
+                blocksCache.remove(entry.getKey());
+                Config cfg = entry.getValue();
 
-            if (cfg.getKeys().isEmpty()) {
-                File file = cfg.getFile();
+                if (cfg.getKeys().isEmpty()) {
+                    File file = cfg.getFile();
 
-                if (file.exists()) {
-                    try {
-                        Files.delete(file.toPath());
-                    } catch (IOException e) {
-                        Slimefun.logger().log(Level.WARNING, e, () -> "Could not delete file \"" + file.getName() + '"');
+                    if (file.exists()) {
+                        try {
+                            Files.delete(file.toPath());
+                        } catch (IOException e) {
+                            Slimefun.logger().log(Level.WARNING, e, () -> "Could not delete file \"" + file.getName() + '"');
+                        }
                     }
-                }
-            } else {
-                File tmpFile = new File(cfg.getFile().getParentFile(), cfg.getFile().getName() + ".tmp");
-                cfg.save(tmpFile);
+                } else {
+                    File tmpFile = new File(cfg.getFile().getParentFile(), cfg.getFile().getName() + ".tmp");
+                    cfg.save(tmpFile);
 
-                try {
-                    Files.move(tmpFile.toPath(), cfg.getFile().toPath(), StandardCopyOption.ATOMIC_MOVE);
-                } catch (IOException x) {
-                    Slimefun.logger().log(Level.SEVERE, x, () -> "An Error occurred while copying a temporary File for Slimefun " + Slimefun.getVersion());
+                    try {
+                        Files.move(tmpFile.toPath(), cfg.getFile().toPath(), StandardCopyOption.ATOMIC_MOVE);
+                    } catch (IOException x) {
+                        Slimefun.logger().log(Level.SEVERE, x, () -> "An Error occurred while copying a temporary File for Slimefun " + Slimefun.getVersion());
+                    }
                 }
             }
         }
@@ -366,6 +521,12 @@ public class BlockStorage {
 
     public static void saveChunks() {
         if (chunkChanges > 0) {
+            if (useDatabaseStorage()) {
+                SqliteDataStore.saveAllChunkData(Slimefun.getRegistry().getChunks());
+                chunkChanges = 0;
+                return;
+            }
+
             File chunks = new File(PATH_CHUNKS + "chunks.sfc");
             Config cfg = new Config(PATH_CHUNKS + "chunks.temp");
 
@@ -580,13 +741,30 @@ public class BlockStorage {
             if (BlockMenuPreset.isUniversalInventory(id)) {
                 Slimefun.getRegistry().getUniversalInventories().computeIfAbsent(id, key -> new UniversalBlockMenu(preset));
             } else if (!storage.hasInventory(l)) {
-                File file = new File(PATH_INVENTORIES + serializeLocation(l) + ".sfi");
+                if (useDatabaseStorage()) {
+                    String yaml = SqliteDataStore.loadBlockInventoryYaml(l);
 
-                if (file.exists()) {
-                    BlockMenu inventory = new BlockMenu(preset, l, new io.github.bakedlibs.dough.config.Config(file));
-                    storage.inventories.put(l, inventory);
+                    if (yaml != null && !yaml.isBlank()) {
+                        try {
+                            YamlConfiguration inventoryCfg = new YamlConfiguration();
+                            inventoryCfg.loadFromString(yaml);
+                            storage.inventories.put(l, new BlockMenu(preset, l, inventoryCfg));
+                        } catch (Exception x) {
+                            Slimefun.logger().log(Level.WARNING, x, () -> "Failed to load sqlite block inventory @ " + serializeLocation(l));
+                            storage.loadInventory(l, preset);
+                        }
+                    } else {
+                        storage.loadInventory(l, preset);
+                    }
                 } else {
-                    storage.loadInventory(l, preset);
+                    File file = new File(PATH_INVENTORIES + serializeLocation(l) + ".sfi");
+
+                    if (file.exists()) {
+                        BlockMenu inventory = new BlockMenu(preset, l, new io.github.bakedlibs.dough.config.Config(file));
+                        storage.inventories.put(l, inventory);
+                    } else {
+                        storage.loadInventory(l, preset);
+                    }
                 }
             }
         }

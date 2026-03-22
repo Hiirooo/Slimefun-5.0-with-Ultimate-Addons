@@ -1,0 +1,23 @@
+# Block/chunk/menu storage backend
+# Available: LEGACY, SQLITE, MYSQL, POSTGRESQL
+storageType: LEGACY
+
+sqlite:
+  file: data-storage/Slimefun/block-data.db
+
+mysql:
+  host: localhost
+  port: 3306
+  database: slimefun
+  user: root
+  password: change-me
+  tablePrefix: sf_
+
+postgresql:
+  host: localhost
+  port: 5432
+  database: slimefun
+  user: postgres
+  password: change-me
+  sslMode: require
+  tablePrefix: sf_

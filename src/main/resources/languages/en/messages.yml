@@ -39,6 +39,17 @@ commands:
     running: '&7Running debug mode with test: &6%test%'
     disabled: '&7Disabled debug mode.'
 
+  migrate:
+    description: 'Migrate legacy player data to SQLite'
+    confirm: '&cAre you sure? Run &e/sf migrate confirm &cto start migration. Do not let players use Slimefun while migrating.'
+    not-sqlite: '&cMigration command requires &eprofile-storage.yml: storageType: SQLITE or POSTGRESQL&c.'
+    restart-required: '&eStorage config changed but runtime backend is still old. Please fully restart server, then run /sf migrate again.'
+    started: '&aStarting migration from legacy files to SQL storage...'
+    success: '&aMigration finished: &e%migrated%&a/&e%total%&a migrated, &c%failed%&a failed.'
+    failed: '&cMigration failed due to an unexpected error. Check console logs.'
+    already-migrated: '&aNo legacy player data files found to migrate.'
+    in-progress: '&eMigration is already in progress.'
+
 placeholderapi:
   profile-loading: 'Loading...'
 
@@ -473,6 +484,7 @@ languages:
   zh-TW: 'Chinese (Taiwan)'
   vi: 'Vietnamese'
   id: 'Indonesian'
+  id-gaul: 'Indonesian (Gaul)'
   el: 'Greek'
   he: 'Hebrew'
   pt: 'Portuguese (Portugal)'

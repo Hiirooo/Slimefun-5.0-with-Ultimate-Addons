@@ -16,6 +16,10 @@ import javax.annotation.Nullable;
 
 import io.github.thebusybiscuit.slimefun4.storage.Storage;
 import io.github.thebusybiscuit.slimefun4.storage.backend.legacy.LegacyStorage;
+import io.github.thebusybiscuit.slimefun4.storage.backend.postgresql.PostgreSqlStorage;
+import io.github.thebusybiscuit.slimefun4.storage.backend.sqlite.SqliteStorage;
+import io.github.thebusybiscuit.slimefun4.storage.database.SlimefunDatabaseManager;
+import io.github.thebusybiscuit.slimefun4.storage.database.StorageType;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -43,6 +47,7 @@ import io.github.thebusybiscuit.slimefun4.core.SlimefunRegistry;
 import io.github.thebusybiscuit.slimefun4.core.commands.SlimefunCommand;
 import io.github.thebusybiscuit.slimefun4.core.networks.NetworkManager;
 import io.github.thebusybiscuit.slimefun4.core.services.AnalyticsService;
+import io.github.thebusybiscuit.slimefun4.core.services.AutoConfigReloadService;
 import io.github.thebusybiscuit.slimefun4.core.services.AutoSavingService;
 import io.github.thebusybiscuit.slimefun4.core.services.BackupService;
 import io.github.thebusybiscuit.slimefun4.core.services.BlockDataService;
@@ -177,6 +182,7 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
     private final GitHubService gitHubService = new GitHubService("Slimefun/Slimefun4");
     private final UpdaterService updaterService = new UpdaterService(this, getDescription().getVersion(), getFile());
     private final MetricsService metricsService = new MetricsService(this);
+    private final AutoConfigReloadService autoConfigReloadService = new AutoConfigReloadService();
     private final AutoSavingService autoSavingService = new AutoSavingService();
     private final BackupService backupService = new BackupService();
     private final PermissionsService permissionsService = new PermissionsService(this);
@@ -203,6 +209,7 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
 
     // Data storage
     private Storage playerStorage;
+    private SlimefunDatabaseManager databaseManager;
 
     // Listeners that need to be accessed elsewhere
     private final GrapplingHookListener grapplingHookListener = new GrapplingHookListener();
@@ -254,6 +261,7 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
         soundService.reload(false);
         // TODO: What do we do if tests want to use another storage backend (e.g. testing new feature on legacy + sql)?
         // Do we have a way to override this?
+        databaseManager = new SlimefunDatabaseManager(this);
         playerStorage = new LegacyStorage();
     }
 
@@ -310,20 +318,33 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
         networkManager = new NetworkManager(networkSize, config.getBoolean("networks.enable-visualizer"), config.getBoolean("networks.delete-excess-items"));
 
         // Data storage
-        playerStorage = new LegacyStorage();
-        logger.log(Level.INFO, "Using legacy storage for player data");
+        databaseManager = new SlimefunDatabaseManager(this);
+        databaseManager.validateAndLog();
+
+        StorageType profileStorageType = databaseManager.getProfileStorageType();
+
+        switch (profileStorageType) {
+            case SQLITE -> {
+                String sqlitePath = databaseManager.getProfileSqlitePath();
+                playerStorage = new SqliteStorage(sqlitePath);
+                logger.log(Level.INFO, "Using sqlite storage for player data ({0})", sqlitePath);
+            }
+            case POSTGRESQL -> {
+                playerStorage = new PostgreSqlStorage();
+                logger.log(Level.INFO, "Using postgresql storage for player data ({0})", databaseManager.getProfilePostgresUrl());
+            }
+            case LEGACY, MYSQL -> {
+                playerStorage = new LegacyStorage();
+                logger.log(Level.INFO, "Using legacy storage for player data");
+            }
+        }
 
         // Setting up bStats and analytics
         new Thread(metricsService::start, "Slimefun Metrics").start();
         analyticsService.start();
 
-        // Starting the Auto-Updater
-        if (config.getBoolean("options.auto-update")) {
-            logger.log(Level.INFO, "Starting Auto-Updater...");
-            updaterService.start();
-        } else {
-            updaterService.disable();
-        }
+        // Auto-Updater is intentionally disabled in this custom rebuild.
+        logger.log(Level.INFO, "Auto-Updater disabled (custom rebuild by HirokawaAzusa).");
 
         // Registering all GEO Resources
         logger.log(Level.INFO, "Loading GEO-Resources...");
@@ -380,6 +401,9 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
 
         // Starting our tasks
         autoSavingService.start(this, config.getInt("options.auto-save-delay-in-minutes"));
+        if (config.getBoolean("options.auto-config-reload.enabled")) {
+            autoConfigReloadService.start(this, config.getInt("options.auto-config-reload.interval-in-seconds"));
+        }
         hologramsService.start();
         ticker.start(this);
 
@@ -414,6 +438,7 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
         }
 
         // Cancel all tasks from this plugin immediately
+        autoConfigReloadService.stop();
         Bukkit.getScheduler().cancelTasks(this);
 
         // Finishes all started movements/removals of block data
@@ -1084,6 +1109,10 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
 
     public static @Nonnull Storage getPlayerStorage() {
         return instance().playerStorage;
+    }
+
+    public static @Nonnull SlimefunDatabaseManager getDatabaseManager() {
+        return instance().databaseManager;
     }
 
     /**
