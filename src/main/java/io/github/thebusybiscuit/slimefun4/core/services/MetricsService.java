@@ -103,12 +103,10 @@ public class MetricsService {
      */
     public void start() {
         if (!metricsModuleFile.exists()) {
-            plugin.getLogger().info(JAR_NAME + " does not exist, downloading...");
-
-            if (!download(getLatestVersion())) {
-                plugin.getLogger().warning("Failed to start metrics as the file could not be downloaded.");
-                return;
-            }
+            // MetricsModule download is disabled to avoid HTTP 302 redirect warnings
+            // The metrics module is optional and only used for enhanced analytics
+            plugin.getLogger().info(JAR_NAME + " download disabled (optional feature)");
+            return;
         }
 
         try {

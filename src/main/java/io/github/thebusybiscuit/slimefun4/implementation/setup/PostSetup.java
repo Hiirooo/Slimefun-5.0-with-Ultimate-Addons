@@ -105,7 +105,7 @@ public final class PostSetup {
             sender.sendMessage(ChatColor.GREEN + " - Bug Reports:  https://github.com/Slimefun/Slimefun4/issues");
             sender.sendMessage(ChatColor.GREEN + " - Discord:      https://discord.gg/slimefun");
         } else {
-            sender.sendMessage(ChatColor.GREEN + " - UNOFFICIALLY MODIFIED BUILD - NO OFFICIAL SUPPORT GIVEN");
+            sender.sendMessage(ChatColor.GREEN + " - REBUILD BY HirokawaAzusa");
         }
 
         sender.sendMessage("");

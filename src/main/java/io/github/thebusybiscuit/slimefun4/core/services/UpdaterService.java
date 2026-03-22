@@ -142,11 +142,7 @@ public class UpdaterService {
         if (updater != null) {
             updater.start();
         } else {
-            printBorder();
-            plugin.getLogger().log(Level.WARNING, "It looks like you are using an unofficially modified build of Slimefun!");
-            plugin.getLogger().log(Level.WARNING, "Auto-Updates have been disabled, this build is not considered safe.");
-            plugin.getLogger().log(Level.WARNING, "Do not report bugs encountered in this Version of Slimefun to any official sources.");
-            printBorder();
+            plugin.getLogger().log(Level.INFO, "Auto-Updater is disabled for this custom build (HirokawaAzusa).");
         }
     }
 

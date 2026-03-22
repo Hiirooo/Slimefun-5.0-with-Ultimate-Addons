@@ -1,0 +1,433 @@
+---
+commands:
+  help: Nampilin bantuan
+  cheat: Biar bisa cheat item
+  give: Kasih item Slimefun ke pemain
+  guide: Dapetin guide Slimefun
+  teleporter: Liat waypoint pemain lain
+  versions: List semua addon yang kepasang
+  search: Cari di guide
+  open_guide: Buka guide tanpa buku
+  stats: Liat statistik pemain
+  research:
+    description: Unlock/Reset riset pemain
+    reset: '&cRiset %player% udah di-reset'
+    reset-target: '&cRiset kamu udah di-reset'
+  backpack:
+    description: Ambil salinan backpack
+    invalid-id: '&4ID harus angka positif!'
+    player-never-joined: '&4Ga ada pemain dengan nama itu'
+    backpack-does-not-exist: '&4Backpack yang kamu pilih ga ada!'
+    restored-backpack-given: '&aBackpack kamu udh masuk ke inventory!'
+  charge:
+    description: Cas item yang lagi dipegang
+    charge-success: Item udh ke cas!
+    not-rechargeable: Item ini ga bisa dicas!
+  timings:
+    description: Timings buat Slimefun dan addons
+    please-wait: '&eTunggu bentar... lagi dihitung!'
+    verbose-player: '&4Flag verbose ga bisa dipake sama Player!'
+    unknown-flag: '&4Flag ga dikenal: &c%flag%'
+  debug:
+    description: 'Jalanin debug logging buat developer'
+    current: '&7Test case yang lagi jalan: &6%test_case%'
+    none-running: '&7Ga ada test case yang lagi jalan!'
+    running: '&7Jalan debug mode: &6%test%'
+    disabled: '&7Debug mode dimatiin.'
+placeholderapi:
+  profile-loading: 'Lagi dimuat...'
+guide:
+  locked: 'KEKUNCI'
+  work-in-progress: 'Fitur ini masih belum kelar!'
+  locked-itemgroup:
+    - 'Buat buka kategori ini kamu'
+    - 'harus buka semua item dari'
+    - 'kategori berikut'
+  search:
+    message: '&bMau cari apa?'
+    name: '&7Cari...'
+    tooltip: '&bKlik buat cari item'
+    inventory: 'Cari: %item%'
+  tooltips:
+    open-itemgroup: 'Klik buat buka'
+    versions-notice: 'Ini penting banget pas ngelaporin bug!'
+    wiki: 'Liat item ini di wiki resmi Slimefun'
+    recipes:
+      machine: 'Resep yang dibikin di mesin ini'
+      miner: 'Resource yang bisa ditambang'
+      generator: 'Fuel yang bisa dipake'
+      gold-pan: 'Resource yang bisa didapet'
+      climbing-pick: 'Permukaan yang bisa dipanjat'
+  cheat:
+    no-multiblocks: '&4Ga bisa cheat di Multiblock, kamu harus bikin!'
+  pages:
+    previous: 'Sebelumnya'
+    next: 'Selanjutnya'
+  back:
+    title: 'Balik'
+    guide: 'Balik ke guide Slimefun'
+    settings: 'Balik ke panel pengaturan'
+  languages:
+    updated: '&aBahasa berhasil diganti ke: &b%lang%'
+    selected-language: 'Yang kepilih sekarang:'
+    select: 'Klik buat pilih bahasa ini'
+    select-default: 'Klik buat pake default server'
+    change: 'Klik buat ganti bahasa'
+    description:
+      - '&7Sekarang kamu bisa ganti'
+      - '&7bahasa yang dipake Slimefun'
+      - '&7buat nunjukin teks ke kamu.'
+    translations:
+      name: '&aAda yang kurang?'
+      lore: 'Klik buat tambahin terjemahan kamu'
+  modes:
+    selected: 'Tipe Guide Slimefun: '
+    change: 'Klik buat ganti tipe'
+    SURVIVAL_MODE: 'Survival Mode'
+    CHEAT_MODE: 'Cheat Sheet'
+  options:
+    fireworks:
+      enabled:
+        text:
+          - '&bFireworks: &aOn'
+          - ''
+          - '&7Kamu bisa toggle mau ngeliat'
+          - '&7fireworks pas riset item atau ga.'
+        click: '&eKlik buat matikan fireworks'
+      disabled:
+        text:
+          - '&bFireworks: &4Off'
+          - ''
+          - '&7Kamu bisa toggle mau ngeliat'
+          - '&7fireworks pas riset item atau ga.'
+        click: '&eKlik buat nyalain fireworks'
+    learning-animation:
+      enabled:
+        text:
+          - '&bLearning Animation: &aOn'
+          - ''
+          - '&7Kamu bisa toggle mau ngeliat'
+          - '&7info riset di chat pas riset item.'
+        click: '&eKlik buat matikan learning animation'
+      disabled:
+        text:
+          - '&bLearning Animation: &4Off'
+          - ''
+          - '&7Kamu bisa toggle mau ngeliat'
+          - '&7info riset di chat pas riset item.'
+        click: '&eKlik buat nyalain learning animation'
+  title:
+    main: 'Slimefun Guide'
+    settings: 'Pengaturan & Info'
+    languages: 'Pilih bahasa'
+    credits: 'Kontributor Slimefun4'
+    wiki: 'Slimefun4 Wiki'
+    addons: 'Addon buat Slimefun4'
+    bugs: 'Lapor Bug'
+    source: 'Source Code'
+    versions: 'Versi terpasang'
+  credits:
+    commit: 'Commit'
+    commits: 'Commits'
+    profile-link: 'Klik buat ke profil GitHub mereka'
+    open: 'Klik buat liat kontributor kami'
+    description:
+      - '&7Slimefun itu proyek open-source'
+      - '&7yang dijaga sama komunitas gede.'
+      - '&7Sampai sekarang udah &e%contributors% &7orang'
+      - '&7yang contribute ke Slimefun.'
+    roles:
+      developer: '&6Developer'
+      wiki: '&3Wiki Editor'
+      resourcepack: '&cResourcepack Artist'
+      translator: '&9Translator'
+actionbar:
+  radiation: '&6Radiasi: &c%level%&7/&e100'
+messages:
+  not-researched: '&4Pengetahuan kamu ga cukup buat ngerti ini. &cKamu harus unlock &f"%item%&f"'
+  not-enough-xp: '&4XP kamu kurang buat unlock ini'
+  unlocked: '&bKamu kebuka &7"%research%"'
+  only-players: '&4Command ini cuma buat pemain'
+  unknown-player: '&4Pemain ga dikenal: &c%player%'
+  no-permission: '&4Kamu ga punya izin buat ini'
+  usage: '&4Pakai: &c%usage%'
+  not-online: '&4%player% &clagi offline!'
+  invalid-item: '&4%item% &citem ga valid!'
+  invalid-amount: '&4%amount% &cjumlah ga valid: harus > 0!'
+  given-item: '&bKamu dapet &a%amount% &7"%item%&7"'
+  give-item: '&bKamu ngasih %player% &a%amount% &7"%item%&7"'
+  invalid-research: '&4%research% &criset ga valid!'
+  give-research: '&bKamu ngasih %player% riset &7"%research%&7"'
+  hungry: '&cKamu kelaperan buat ini!'
+  disabled-in-world: '&4&lItem ini dimatiin di dunia ini'
+  disabled-item: '&4&lItem ini dimatiin! Kamu dapet dari mana?'
+  no-tome-yourself: '&cKamu ga bisa pake &4Tome of Knowledge &cbuat diri sendiri...'
+  multimeter: '&bEnergi kesimpen: &3%stored% &b/ &3%capacity%'
+  piglin-barter: '&4Kamu ga bisa barter sama piglin pake item Slimefun'
+  bee-suit-slow-fall: '&eSayap lebah kamu bakal bantuin turun ke tanah dengan pelan'
+  deprecated-item: '&4Item ini udh deprecated dan akan dihapus soon.'
+  researching-is-disabled: '&cRiset dimatiin di server ini. Semua riset kebuka!'
+  await-deletion: '&cGa bisa naruh blok Slimefun langsung abis hancurin. Tunggu bentar.'
+  multi-tool:
+    mode-change: '&b%device% mode ganti ke: &9%mode%'
+    not-shears: '&cMulti Tool ga bisa dipake buat gunting!'
+  auto-crafting:
+    select-a-recipe: '&eCrouch + Klik Kanan &7pake item yang mau di-craft.'
+    recipe-set: '&aResep berhasil diset buat mesin ini.'
+    recipe-removed: '&eResep berhasil dihapus. Kamu bisa set ulang kapan aja!'
+    no-recipes: '&cGa nemu resep valid buat item yang kamu pegang.'
+    missing-chest: '&cChest missing! Auto-Crafter harus ada di atas chest.'
+    select: 'Pilih resep ini'
+    temporarily-disabled: '&eAuto-Crafter ini dimatiin bentar. Kamu bisa nyalain lagi!'
+    re-enabled: '&eAuto-Crafter ini dihidupin lagi!'
+    recipe-unavailable: |
+      &cItem ini either dimatiin di server ini, atau kamu belom unlock.
+      &7Coba craft itemnya dulu buat unlock resepnya.
+    tooltips:
+      enabled:
+        - '&aResep ini lagi aktif'
+        - ''
+        - '&eKlik Kiri &7buat matiin bentar'
+        - '&eKlik Kanan &7buat hapus resep'
+      disabled:
+        - '&cResep ini lagi mati'
+        - ''
+        - '&eKlik Kiri &7buat nyalanin'
+        - '&eKlik Kanan &7buat hapus'
+  talisman:
+    anvil: '&a&oTalisman kamu ngelindungin tool biar ga rusak'
+    miner: '&a&oTalisman kamu bikin dapet dobel drop!'
+    farmer: '&a&oTalisman kamu bikin dapet dobel drop!'
+    hunter: '&a&oTalisman kamu bikin dapet dobel drop!'
+    lava: '&a&oTalisman kamu nyelametin dari mati kebakar'
+    water: '&a&oTalisman kamu nyelametin dari mati tenggelam'
+    angel: '&a&oTalisman kamu nyelametin dari mati jatoh'
+    fire: '&a&oTalisman kamu nyelametin dari mati kepalus'
+    magician: '&a&oTalisman kamu ngasih enchant extra'
+    traveller: '&a&oTalisman kamu ngasih Speed Boost'
+    warrior: '&a&oTalisman kamu ngasih Strength bentar'
+    knight: '&a&oTalisman kamu ngasih Regenerasi 5 detik'
+    whirlwind: '&a&oTalisman kamu ngelempar balik projectile'
+    wizard: '&a&oTalisman kamu ngasih Fortune lebih tapi bisa ngurangin enchant lain'
+    caveman: '&a&oTalisman kamu ngasih Haste'
+    wise: '&a&oTalisman kamu bikin XP drop jadi dobel'
+  soulbound-rune:
+    fail: '&cKamu cuma bisa nge-bind satu itemsekali aja.'
+    success: '&aItem ini udh di-bind ke jiwamu! Item ini bakal tetep sama kamu even abis mati'
+  enchantment-rune:
+    fail: '&cItem ini ga bisa di-enchant.'
+    no-enchantment: '&cGa nemu enchant yang cocok buat item ini.'
+    success: '&aEnchant random berhasil dipake ke item ini.'
+  research:
+    start: '&7Roh kuno ng bisik2 ke telingamu!'
+    progress: '&7Kamu lagi nguprek &b%research% &e(%progress%)'
+  tape-measure:
+    no-anchor: '&cKamu harus set anchor dulu!'
+    wrong-world: '&cAnchor kamu kayaknya di world lain!'
+    distance: '&7Jarak diukur. &eJarak: %distance%'
+    anchor-set: '&aAnchor berhasil diset:&e %anchor%'
+  climbing-pick:
+    dual-wielding: '&4Kamu harus pegang Climbing Picks di kedua tangan!'
+    wrong-material: '&cPermukaan ini ga bisa dipanjat. Cek guide Slimefun!'
+  fire-extinguish: '&7Kamu matiin api di diri kamu sendiri'
+  cannot-place: '&cGa bisa naruh blok di situ!'
+  no-pvp: '&cGa bisa PvP di sini!'
+  radiation: '&4Kamu kehujani radiasi! &cBuang item radioaktif itu atau pake Hazmat lengkap!'
+  opening-guide: '&bBuka guide, mungkin bentar...'
+  opening-backpack: '&bBuka backpack, mungkin bentar...'
+  no-iron-golem-heal: '&cItu bukan Iron Ingot. Kamu ga bisa pake ini buat ngobatin Iron Golem!'
+  link-prompt: '&eKlik di sini:'
+  diet-cookie: '&eKamu ngerasa lebih ringan...'
+  fortune-cookie:
+    - '&7Tolongin, aku ketahan di pabrik fortune cookie!'
+    - '&7Kamu bakal mati besok... dibunuh Creeper'
+    - '&7Akan ada hal buruk dalam hidupmu!!!'
+    - '&7Minggu depan kamu bakal sadar kalo ini bukan dunia nyata, kamu di game'
+    - '&7Cookie ini bakal jadi enak dalam beberapa detik'
+    - '&7Kata terakhir yang bakal kamu denger: "EXTERMINATE!!!"'
+    - '&7Apapun yang kamu lakuin, jangan peluk Creeper... aku udh nyoba. Nyaman, tapi ga worth it.'
+    - '&742. Jawabannya 42.'
+    - '&7A Walshy a day keeps the troubles away.'
+    - '&7Jangan pernah gali lurus ke bawah!'
+    - '&7Ini cuma luka luar!'
+    - '&7Selalu lihat sisi cerah hidup!'
+    - '&7Ini sebenernya biskuit bukan Cookie'
+    - '&7Neon signs are LIT!'
+  above-limit-level: '&cGa bisa (dis)enchant level lebih tinggi dari %level%!'
+  pickaxe-of-the-seeker:
+    no-ores: '&cGa nemu bijih terdekat!'
+machines:
+  pattern-not-found: '&eGa kenal resep ini. Taruh item di dispenser sesuai pola.'
+  unknown-material: '&eGa kenal item di dispenser. Masukin item yang aku tau.'
+  wrong-item: '&eGa kenal item yang kamu klik. Cek resep lagi.'
+  full-inventory: '&eInventory ku udh penuh!'
+  in-use: '&cInventory blok ini lagi dibuka sama pemain lain.'
+  ignition-chamber-no-flint: '&cIgnition Chamber kehabisan Flint and Steel.'
+  inventory-empty: '&6Multiblock berhasil dibikin. Masukin item ke dispenser terus klik lagi buat craft!'
+  ANCIENT_ALTAR:
+    not-enough-pedestals: '&4Altar ga dikelilingi pedestal yang cukup &c(%pedestals% / 8)'
+    unknown-catalyst: '&4Catalyst ga dikenal! &cPake resep yang bener!'
+    unknown-recipe: '&4Resep ga dikenal! &cPake resep yang bener!'
+  ANCIENT_PEDESTAL:
+    obstructed: '&4Pedestal kehalang! &cBuang semua yang di atasnya!'
+  HOLOGRAM_PROJECTOR:
+    enter-text: '&7Ketik teks hologram yang kamu mau di chat. &r(Warna teks supported!)'
+    inventory-title: 'Hologram Editor'
+  ELEVATOR:
+    no-destinations: '&4Ga ada lantai'
+    pick-a-floor: '&3- Pilih Lantai -'
+    current-floor: '&eIni lantai yang kamu diem sekarang:'
+    click-to-teleport: '&eKlik &7buat teleport ke lantai ini:'
+    enter-name: '&7Ketik nama lantai yang kamu mau di chat. &f(Warna supported!)'
+    named: '&2Nama lantai berhasil diset: &f%floor%'
+    editor-title: 'Konfigurasi elevator ini'
+  TELEPORTER:
+    teleporting: '&3Teleportasi...'
+    teleported: '&3Teleportasi kelar!'
+    cancelled: '&4Teleportasi dibatalin!'
+    invulnerability: '&b&lKamu kebal 30 detik!'
+    gui:
+      title: 'Waypoint kamu'
+      tooltip: 'Klik buat teleport'
+      time: 'Estimasi waktu'
+  GPS_CONTROL_PANEL:
+    title: 'GPS - Control Panel'
+    transmitters: 'Transmitter Overview'
+    waypoints: 'Waypoint Overview'
+  CARGO_NODES:
+    must-be-placed: '&4Harus ditaruh di chest atau mesin!'
+    connected: '&2Tersambung!'
+    not-connected: '&4Belum tersambung!'
+  INDUSTRIAL_MINER:
+    no-fuel: '&cIndustrial Miner kehabisan fuel! Masukin fuel ke chest di atas.'
+    piston-facing: '&cIndustrial Miner butuh piston menghadap ke atas!'
+    piston-space: '&cDua piston butuh satu block kosong di atasnya!'
+    destroyed: '&cIndustrial Miner kamu kehancurin.'
+    already-running: '&cIndustrial Miner ini lagi jalan!'
+    full-chest: '&cChest Industrial Miner kamu penuh!'
+    no-permission: '&4Kamu ga punya izin ngoperasian Industrial Miner di sini!'
+    finished: '&eIndustrial Miner kamu udh kelar! Total %ores% ore(s)!'
+anvil:
+  not-working: '&4Kamu ga bisa pake item Slimefun di anvil!'
+  mcmmo-salvaging: '&4Kamu ga bisa salvage item Slimefun!'
+brewing_stand:
+  not-working: '&4Kamu ga bisa pake item Slimefun di brewing stand!'
+cartography_table:
+  not-working: '&4Kamu ga bisa pake item Slimefun di cartography table!'
+smithing_table:
+  not-working: '&4Kamu ga bisa pake item Slimefun buat smithing material!'
+villagers:
+  no-trading: '&4Kamu ga bisa trading item Slimefun sama villagers!'
+backpack:
+  already-open: '&cBackpack ini lagi dibuka di tempat lain!'
+  no-stack: '&cGa bisa nge-stack backpack'
+workbench:
+  not-enhanced: '&4Kamu ga bisa pake item Slimefun di workbench biasa'
+cauldron:
+  no-discoloring: '&4Kamu ga bisa ganti warna Armor Slimefun'
+gps:
+  deathpoint: '&4Titik Mati &7%date%'
+  status-online: 'ONLINE'
+  status-offline: 'OFFLINE'
+  waypoint:
+    new: '&eKetik nama waypoint baru di chat. &7(Warna supported!)'
+    added: '&aWaypoint baru berhasil ditambah'
+    max: '&4Kamu udh mentok max waypoint'
+    duplicate: '&4Kamu udh bikin waypoint namanya: &f%waypoint%'
+  insufficient-complexity:
+    - '&4Kompleksitas GPS jaringan ga cukup: &c%complexity%'
+    - '&4a) Kamu belom bikin jaringan GPS'
+    - '&4b) Kompleksitas GPS jaringan kamu belom cukup'
+  geo:
+    scan-required: '&4Harus scan GEO dulu! &cPake GEO-Scanner!'
+inventory:
+  no-access: '&4Kamu ga punya akses ke blok ini'
+android:
+  started: '&7Android kamu lanjutin scriptnya'
+  stopped: '&7Android kamu stop jalanin script'
+  scripts:
+    already-uploaded: '&4Script ini udh diupload.'
+    editor: 'Script Editor'
+    too-long: '&cScriptnya kepanjangan buat di-edit!'
+    instructions:
+      START: '&2Mulai Script'
+      REPEAT: '&9Ulangi Script'
+      WAIT: '&eTunggu 0.5s'
+      GO_FORWARD: '&7Maju'
+      GO_UP: '&7Naik'
+      GO_DOWN: '&7Turun'
+      TURN_LEFT: '&7Belok kiri'
+      TURN_RIGHT: '&7Belok kanan'
+      DIG_UP: '&bGali ke atas'
+      DIG_FORWARD: '&bGali ke depan'
+      DIG_DOWN: '&bGali ke bawah'
+      MOVE_AND_DIG_UP: '&bGerak & gali ke atas'
+      MOVE_AND_DIG_FORWARD: '&bGerak & gali ke depan'
+      MOVE_AND_DIG_DOWN: '&bGerak & gali ke bawah'
+      ATTACK_MOBS_ANIMALS: '&4Serang &c(Mob & Hewan)'
+      ATTACK_MOBS: '&4Serang &c(Mob)'
+      ATTACK_ANIMALS: '&4Serang &c(Hewan)'
+      ATTACK_ANIMALS_ADULT: '&4Serang &c(Hewan &7[Dewasa]&c)'
+      CHOP_TREE: '&cTebang & Tanam ulang'
+      CATCH_FISH: '&bTangkep ikan'
+      FARM_FORWARD: '&bPanen & Tanam ulang'
+      FARM_DOWN: '&bPanen & Tanam ulang &7(Blok bawah)'
+      FARM_EXOTIC_FORWARD: '&bPanen & Tanam ulang lanjutan'
+      FARM_EXOTIC_DOWN: '&bPanen & Tanam ulang lanjutan &7(Blok bawah)'
+      INTERFACE_ITEMS: '&9Push item ke Interface'
+      INTERFACE_FUEL: '&cAmbil fuel dari Interface'
+    enter-name:
+      - ''
+      - '&eKetik nama script kamu'
+      - ''
+    uploaded:
+      - '&bUpload...'
+      - '&aBerhasil diupload!'
+    rating:
+      own: '&4Kamu ga bisa ngasih rating script kamu sendiri!'
+      already: '&4Kamu udh ngasih rating untuk script ini!'
+languages:
+  default: 'Server-Default'
+  en: 'English'
+  de: 'German'
+  fr: 'French'
+  it: 'Italian'
+  es: 'Spanish'
+  pl: 'Polish'
+  sv: 'Swedish'
+  nl: 'Dutch'
+  cs: 'Czech'
+  hu: 'Hungarian'
+  lv: 'Latvian'
+  ru: 'Russian'
+  sk: 'Slovak'
+  zh-CN: 'Chinese (China)'
+  zh-TW: 'Chinese (Taiwan)'
+  vi: 'Vietnamese'
+  id: 'Indonesian'
+  id-gaul: 'Indonesian (Gaul)'
+  el: 'Greek'
+  he: 'Hebrew'
+  pt: 'Portuguese (Portugal)'
+  pt-BR: 'Portuguese (Brazil)'
+  ar: 'Arabic'
+  af: 'Afrikaans'
+  da: 'Danish'
+  fi: 'Finnish'
+  uk: 'Ukrainian'
+  ms: 'Malay'
+  'no': 'Norwegian'
+  ja: 'Japanese'
+  fa: 'Persian'
+  th: 'Thai'
+  tl: 'Tagalog'
+  ro: 'Romanian'
+  bg: 'Bulgarian'
+  ko: 'Korean'
+  tr: 'Turkish'
+  hr: 'Croatian'
+  mk: 'Macedonian'
+  sr: 'Serbian'
+  be: 'Belarusian'
+  si-LK: 'Sinhala'
+  lt: 'Lithuanian'
