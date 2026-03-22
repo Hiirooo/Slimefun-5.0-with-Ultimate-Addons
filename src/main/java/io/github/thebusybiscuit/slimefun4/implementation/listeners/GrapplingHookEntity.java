@@ -9,20 +9,30 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
-import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
+import io.github.bakedlibs.dough.items.ItemUtils;
 
 final class GrapplingHookEntity {
 
     private final boolean dropItem;
-    private final boolean wasConsumed;
+    private final boolean consumeOnUse;
+    private final int maxDistance;
+    private boolean consumed;
+    private final ItemStack sourceItem;
+    private final ItemStack returnItem;
     private final Arrow arrow;
     private final Entity leashTarget;
 
     @ParametersAreNonnullByDefault
-    GrapplingHookEntity(Player p, Arrow arrow, Entity leashTarget, boolean dropItem, boolean wasConsumed) {
+    GrapplingHookEntity(Player p, Arrow arrow, Entity leashTarget, boolean dropItem, boolean consumeOnUse, ItemStack returnItem, int maxDistance, ItemStack sourceItem) {
         this.arrow = arrow;
-        this.wasConsumed = wasConsumed;
+        this.consumeOnUse = consumeOnUse;
+        this.maxDistance = maxDistance;
+        this.sourceItem = sourceItem;
+        this.returnItem = returnItem.clone();
+        this.returnItem.setAmount(1);
         this.leashTarget = leashTarget;
         this.dropItem = p.getGameMode() != GameMode.CREATIVE && dropItem;
     }
@@ -32,10 +42,25 @@ final class GrapplingHookEntity {
         return arrow;
     }
 
+    public int getMaxDistance() {
+        return maxDistance;
+    }
+
+    public void consumeIfNeeded() {
+        if (consumed || !consumeOnUse || sourceItem == null) {
+            return;
+        }
+
+        if (sourceItem.getType() == Material.LEAD) {
+            ItemUtils.consumeItem(sourceItem, false);
+            consumed = true;
+        }
+    }
+
     public void drop(@Nonnull Location l) {
         // If a grappling hook was consumed, drop one grappling hook on the floor
-        if (dropItem && wasConsumed) {
-            Item item = l.getWorld().dropItem(l, SlimefunItems.GRAPPLING_HOOK.item());
+        if (dropItem && consumed) {
+            Item item = l.getWorld().dropItem(l, returnItem.clone());
             item.setPickupDelay(16);
         }
     }
@@ -48,6 +73,11 @@ final class GrapplingHookEntity {
         if (leashTarget.isValid()) {
             leashTarget.remove();
         }
+    }
+
+    @Nonnull
+    public Entity getLeashTarget() {
+        return leashTarget;
     }
 
 }

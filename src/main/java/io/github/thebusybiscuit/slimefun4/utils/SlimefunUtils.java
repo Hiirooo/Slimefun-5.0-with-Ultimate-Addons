@@ -382,8 +382,10 @@ public final class SlimefunUtils {
                     return id.equals((sf_sfitem.getId()));
                 }
 
-                ItemMeta meta = sf_sfitem.getItem().getItemMeta();
-                return equalsItemMeta(itemMeta, meta, checkLore);
+                // Security hardening:
+                // If the expected item is a Slimefun item, we require a valid Slimefun item-id tag.
+                // Do not fall back to display-name/lore similarity, as those can be spoofed by renaming.
+                return false;
             } else if (sfitem instanceof ItemStackWrapper && sfitem.hasItemMeta()) {
                 Debug.log(TestCase.CARGO_INPUT_TESTING, "  is wrapper");
                 /*

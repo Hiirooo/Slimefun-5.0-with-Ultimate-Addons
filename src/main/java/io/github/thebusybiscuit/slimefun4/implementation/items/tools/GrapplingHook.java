@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import io.github.bakedlibs.dough.items.ItemUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemSetting;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -39,6 +38,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.listeners.GrapplingHook
 public class GrapplingHook extends SimpleSlimefunItem<ItemUseHandler> {
 
     private final ItemSetting<Boolean> consumeOnUse = new ItemSetting<>(this, "consume-on-use", true);
+    private final ItemSetting<Integer> maxDistance = new IntRangeSetting(this, "max-distance-blocks", 5, 48, 256);
     private final ItemSetting<Integer> despawnTicks = new IntRangeSetting(this, "despawn-seconds", 0, 60, Integer.MAX_VALUE);
 
     @ParametersAreNonnullByDefault
@@ -47,6 +47,7 @@ public class GrapplingHook extends SimpleSlimefunItem<ItemUseHandler> {
 
         addItemSetting(despawnTicks);
         addItemSetting(consumeOnUse);
+        addItemSetting(maxDistance);
     }
 
     @Override
@@ -65,11 +66,8 @@ public class GrapplingHook extends SimpleSlimefunItem<ItemUseHandler> {
                 }
 
                 ItemStack item = e.getItem();
-
-                if (item.getType() == Material.LEAD && isConsumed) {
-                    // If consume on use is enabled, consume one item
-                    ItemUtils.consumeItem(item, false);
-                }
+                ItemStack returnItem = item.clone();
+                returnItem.setAmount(1);
 
                 Vector direction = p.getEyeLocation().getDirection().multiply(2.0);
                 Arrow arrow = p.getWorld().spawn(p.getEyeLocation().add(direction.getX(), direction.getY(), direction.getZ()), Arrow.class);
@@ -85,7 +83,7 @@ public class GrapplingHook extends SimpleSlimefunItem<ItemUseHandler> {
                 bat.setLeashHolder(arrow);
 
                 boolean state = item.getType() != Material.SHEARS;
-                Slimefun.getGrapplingHookListener().addGrapplingHook(p, arrow, bat, state, despawnTicks.getValue(), isConsumed);
+                Slimefun.getGrapplingHookListener().addGrapplingHook(p, arrow, bat, state, despawnTicks.getValue(), isConsumed, returnItem, maxDistance.getValue(), item);
             }
         };
     }

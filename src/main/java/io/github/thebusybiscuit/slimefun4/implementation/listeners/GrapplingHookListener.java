@@ -20,6 +20,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityPortalEnterEvent;
+import org.bukkit.event.entity.EntityUnleashEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
@@ -135,6 +136,21 @@ public class GrapplingHookListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onLeashBreak(EntityUnleashEvent e) {
+        if (grapplingHook.isDisabled()) {
+            return;
+        }
+
+        for (GrapplingHookEntity hook : activeHooks.values()) {
+            if (hook.getLeashTarget().getUniqueId().equals(e.getEntity().getUniqueId())) {
+                // Prevent vanilla lead drops when the grappling leash breaks at long distance.
+                e.setDropLeash(false);
+                break;
+            }
+        }
+    }
+
     // Fixing Issue #2351
     @EventHandler
     public void onLeash(PlayerLeashEntityEvent e) {
@@ -158,6 +174,15 @@ public class GrapplingHookListener implements Listener {
 
             if (hook != null) {
                 Location target = arrow.getLocation();
+                double distance = player.getLocation().distance(target);
+
+                if (distance > hook.getMaxDistance()) {
+                    hook.remove();
+                    activeHooks.remove(player.getUniqueId());
+                    return;
+                }
+
+                hook.consumeIfNeeded();
                 hook.drop(target);
 
                 Vector velocity = new Vector(0.0, 0.2, 0.0);
@@ -197,8 +222,8 @@ public class GrapplingHookListener implements Listener {
     }
 
     @ParametersAreNonnullByDefault
-    public void addGrapplingHook(Player p, Arrow arrow, Bat bat, boolean dropItem, long despawnTicks, boolean wasConsumed) {
-        GrapplingHookEntity hook = new GrapplingHookEntity(p, arrow, bat, dropItem, wasConsumed);
+    public void addGrapplingHook(Player p, Arrow arrow, Bat bat, boolean dropItem, long despawnTicks, boolean consumeOnUse, @Nonnull ItemStack returnItem, int maxDistance, @Nonnull ItemStack sourceItem) {
+        GrapplingHookEntity hook = new GrapplingHookEntity(p, arrow, bat, dropItem, consumeOnUse, returnItem, maxDistance, sourceItem);
         UUID uuid = p.getUniqueId();
 
         activeHooks.put(uuid, hook);

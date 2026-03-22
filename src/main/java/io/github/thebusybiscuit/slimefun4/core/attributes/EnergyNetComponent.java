@@ -135,6 +135,7 @@ public interface EnergyNetComponent extends ItemAttribute {
                     BlockStorage.addBlockInfo(l, "energy-charge", String.valueOf(charge), false);
 
                     // Update the capacitor texture
+                    // Note: We must pass the new total charge, not the delta.
                     if (getEnergyComponentType() == EnergyNetComponentType.CAPACITOR) {
                         SlimefunUtils.updateCapacitorTexture(l, charge, capacity);
                     }
@@ -162,8 +163,9 @@ public interface EnergyNetComponent extends ItemAttribute {
                     BlockStorage.addBlockInfo(l, "energy-charge", String.valueOf(newCharge), false);
 
                     // Update the capacitor texture
+                    // Note: We must pass the new total charge, not the delta.
                     if (getEnergyComponentType() == EnergyNetComponentType.CAPACITOR) {
-                        SlimefunUtils.updateCapacitorTexture(l, charge, capacity);
+                        SlimefunUtils.updateCapacitorTexture(l, newCharge, capacity);
                     }
                 }
             }
@@ -190,7 +192,8 @@ public interface EnergyNetComponent extends ItemAttribute {
 
                     // Update the capacitor texture
                     if (getEnergyComponentType() == EnergyNetComponentType.CAPACITOR) {
-                        SlimefunUtils.updateCapacitorTexture(l, charge, capacity);
+                        // Note: We must pass the new total charge, not the delta.
+                        SlimefunUtils.updateCapacitorTexture(l, newCharge, capacity);
                     }
                 }
             }
