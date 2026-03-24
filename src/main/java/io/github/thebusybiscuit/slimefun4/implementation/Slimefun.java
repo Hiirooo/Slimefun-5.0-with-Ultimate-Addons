@@ -343,8 +343,8 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
         new Thread(metricsService::start, "Slimefun Metrics").start();
         analyticsService.start();
 
-        // Auto-Updater is intentionally disabled in this custom rebuild.
-        logger.log(Level.INFO, "Auto-Updater disabled (custom rebuild by HirokawaAzusa).");
+        // Auto-Updater
+        updaterService.start();
 
         // Registering all GEO Resources
         logger.log(Level.INFO, "Loading GEO-Resources...");
@@ -438,6 +438,7 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
         }
 
         // Cancel all tasks from this plugin immediately
+        updaterService.stop();
         autoConfigReloadService.stop();
         Bukkit.getScheduler().cancelTasks(this);
 

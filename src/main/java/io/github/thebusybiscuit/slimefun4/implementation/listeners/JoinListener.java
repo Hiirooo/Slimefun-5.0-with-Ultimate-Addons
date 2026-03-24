@@ -29,6 +29,8 @@ public class JoinListener implements Listener {
 
     @EventHandler
     public void onJoin(@Nonnull PlayerJoinEvent e) {
+        Slimefun.getUpdater().notifyPlayer(e.getPlayer());
+
         PlayerProfile.get(e.getPlayer(), playerProfile -> {
             final ItemStack[] armorContents = e.getPlayer().getInventory().getArmorContents();
             final HashedArmorpiece[] hashedArmorpieces = playerProfile.getArmor();

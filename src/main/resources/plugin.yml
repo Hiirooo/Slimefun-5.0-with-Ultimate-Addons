@@ -70,6 +70,12 @@ permissions:
   slimefun.command.migrate:
     description: Allows you to do /sf migrate
     default: op
+  slimefun.command.updatecheck:
+    description: Allows you to do /sf updatecheck
+    default: op
+  slimefun.notify.update:
+    description: Receive Slimefun update notifications
+    default: op
   slimefun.android.bypass:
     description: Allows you to edit other Players Androids
     default: op

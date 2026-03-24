@@ -325,6 +325,32 @@
                     </groups>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+
+                <executions>
+                    <execution>
+                        <id>publish-release-artifacts</id>
+                        <phase>package</phase>
+
+                        <configuration>
+                            <target>
+                                <mkdir dir="${project.basedir}/release" />
+                                <copy file="${project.build.directory}/${project.build.finalName}.jar" tofile="${project.basedir}/release/${project.build.finalName}.jar" overwrite="true" />
+                                <delete file="${project.basedir}/release/${project.build.finalName}.jar.sha256" quiet="true" />
+                                <checksum file="${project.basedir}/release/${project.build.finalName}.jar" algorithm="SHA-256" fileext=".sha256" format="MD5SUM" />
+                            </target>
+                        </configuration>
+
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
 
         <resources>

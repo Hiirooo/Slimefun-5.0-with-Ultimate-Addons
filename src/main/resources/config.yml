@@ -4,7 +4,7 @@ options:
   # Note: When running a stable build auto-updates ONLY update to other stable builds! Perfect eh?
   # You can download the latest stable build here: https://thebusybiscuit.github.io/builds/TheBusyBiscuit/Slimefun4/stable/
 
-  auto-update: false
+  auto-update: true
   chat-prefix: '&a&lSlimefun 4&7> '
   armor-update-interval: 10
   enable-armor-effects: true
@@ -16,6 +16,7 @@ options:
   auto-config-reload:
     enabled: true
     interval-in-seconds: 10
+  # GitHub auto-update is hardcoded in this custom build and cannot be disabled from config.
   legacy-ore-washer: false
   legacy-dust-washer: false
   legacy-ore-grinder: true
